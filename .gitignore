@@ -1,0 +1,4 @@
+# 개인 학습 데이터는 vault(06_English/Review/history.json)에 보관 — repo에 포함하지 않음
+history.json
+*.local.md
+.DS_Store

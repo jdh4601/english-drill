@@ -4,7 +4,7 @@
 
 ## 저장 위치 / 파일명
 
-- 경로: `/Users/jayden/Obsidian-vault/06_English/Review/`
+- 경로: `REVIEW_DIR` (SKILL.md Configuration 참고. 기본 `English/Review/`, 제작자 vault는 `06_English/Review/`)
 - 파일명: `YYYY-MM-DD {약점주제}.md`
   - 예: `2026-06-25 동사충돌·불가산명사·한국어직역·불필요한전치사.md`
   - {약점주제}는 이번 세션에서 다룬 약점들을 `·`로 연결.

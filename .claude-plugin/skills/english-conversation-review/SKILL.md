@@ -5,7 +5,18 @@ description: Analyze an English conversation transcript (with a teacher/AI tutor
 
 # English Conversation Review Note
 
-Turn a raw English-practice transcript + app stat screenshots into a polished review note saved in **`/Users/jayden/Obsidian-vault/06_English`**.
+Turn a raw English-practice transcript + app stat screenshots into a polished review note saved in your vault's **`ENGLISH_DIR`** (see Configuration).
+
+## Configuration
+
+This skill reads/writes inside one folder of your Obsidian vault. Two paths, both vault-relative:
+
+- **`ENGLISH_DIR`** — where the finished review notes go. Default: `English/`.
+- **`REVIEW_DIR`** — `ENGLISH_DIR/Review/`, holding the shared memory `history.json` (and the drill's 오답노트). Default: `English/Review/`.
+
+If your vault uses a different layout, change these two defaults to match (e.g. `06_English/`, `05_Personal/English/`). Everything below refers to `ENGLISH_DIR` / `REVIEW_DIR` — adapt them to your vault, don't hardcode someone else's path.
+
+**Resolving the path at runtime:** if the user hasn't set one explicitly, search the vault for an existing `*/Review/history.json` and use that folder (so prior sessions are never orphaned); only if none exists, fall back to creating `English/Review/`. The author's vault, for reference, resolves to `06_English/`.
 
 ## Inputs
 
@@ -28,7 +39,7 @@ If either is missing, ask for it before proceeding.
 
 ## Memory (능력치 기록)
 
-Past scores and recurring mistakes are persisted in **`/Users/jayden/Obsidian-vault/06_English/Review/history.json`** (in the vault, not in this plugin — it's shared memory that the `english-weakness-drill` skill also reads). This is the "memory" that powers the week-over-week comparison and the 실력 요약. If the file doesn't exist yet, create it with an empty `sessions: []`. Structure:
+Past scores and recurring mistakes are persisted in **`REVIEW_DIR/history.json`** (in your vault, not in this plugin — it's shared memory that the `english-weakness-drill` skill also reads). This is the "memory" that powers the week-over-week comparison and the 실력 요약. If the file doesn't exist yet, create it (and `REVIEW_DIR` if needed) with an empty `sessions: []`. Structure:
 
 ```json
 {
@@ -51,7 +62,7 @@ Past scores and recurring mistakes are persisted in **`/Users/jayden/Obsidian-va
 ## Workflow
 
 1. **Read the transcript.** Identify the main topic (1 short phrase, e.g. `여행 계획`, `직장 면접`).
-2. **Read `06_English/Review/history.json` first.** Take the **last session** as the comparison baseline (지난 세션). Scan recent sessions' `mistakes` arrays to find any tag that appears **2+ times** — these are the user's repeated, unresolved weaknesses, and must be called out in 실력 요약. If the file has no sessions yet, skip the comparison (single-series chart, no delta table) and say so.
+2. **Read `REVIEW_DIR/history.json` first.** Take the **last session** as the comparison baseline (지난 세션). Scan recent sessions' `mistakes` arrays to find any tag that appears **2+ times** — these are the user's repeated, unresolved weaknesses, and must be called out in 실력 요약. If the file has no sessions yet, skip the comparison (single-series chart, no delta table) and say so.
 3. **Read every screenshot** and pull each visible metric. Map app labels → table columns:
    - Speaking time → `Speaking time` · Vocabulary size → `Vocabulary size` · Speaking speed (WPM) → `Speaking speed`
    - `Total words`, `New words`, `Vocabulary variety` come from **other screenshots** — fill from whichever screen shows them.
@@ -64,8 +75,8 @@ Past scores and recurring mistakes are persisted in **`/Users/jayden/Obsidian-va
    - **아쉬운 것** — recurring errors or missed opportunities, concrete and actionable; each as a `###` subheading.
    - **시각화** — score 6 skill dimensions (발음, 유창성, 문법, 어휘, 청취, 발화 속도) on a 1–5 scale. 발음/유창성/문법/어휘/청취 come from the transcript + screenshots (be honest — reflect 잘한 것 / 아쉬운 것). **발화 속도** is derived from the Speaking speed (WPM) in statistics, mapped to 1–5: `<70→2`, `70–89→2.5`, `90–109→3`, `110–129→3.5`, `130–149→4`, `150–169→4.5`, `≥170→5`. If no screenshot shows WPM, leave 발화 속도 out of the chart for this session. Render as an Obsidian **Charts** `bar` block with **two series**: 지난 세션 (from `history.json`'s last entry) and 이번 세션. Then add a **변화 table** showing the per-dimension delta with an arrow (▲ 상승 / ▼ 하락 / = 동일); for the 발화 속도 row, note the raw WPM in parentheses. If there's no prior session, use a single series and omit the 변화 table.
    - **실력 요약** — 3–5 sentences in Korean. Cover: (a) current level (reference the app's Speaking level / Grammar score if shown); (b) **week-over-week 변화** — which skills rose/fell vs the last session and the net trend; (c) **반복 실수** — any mistake tag that recurs across `history.json` (2+ sessions), named explicitly as the thing to fix; (d) the single most impactful next action.
-5. **Append this session to `06_English/Review/history.json`.** Add an object with `date` (today), `topic`, the 6 `scores`, `wpm` (raw Speaking speed, or `null`), and a `mistakes` array of short Korean tags drawn from this session's 틀린 문장 / 아쉬운 것. Preserve all existing sessions — read, append, write the whole file back. Never overwrite or drop prior entries. These `mistakes` tags are what `english-weakness-drill` pulls in to build its drill rounds, so keep them concise and reusable.
-6. **Save** the note to `/Users/jayden/Obsidian-vault/06_English` as `{YYYY-MM-DD} {대화 주제 간단 요약}.md` (today's date, then the topic phrase from step 1).
+5. **Append this session to `REVIEW_DIR/history.json`.** Add an object with `date` (today), `topic`, the 6 `scores`, `wpm` (raw Speaking speed, or `null`), and a `mistakes` array of short Korean tags drawn from this session's 틀린 문장 / 아쉬운 것. Preserve all existing sessions — read, append, write the whole file back. Never overwrite or drop prior entries. These `mistakes` tags are what `english-weakness-drill` pulls in to build its drill rounds, so keep them concise and reusable.
+6. **Save** the note to `ENGLISH_DIR` as `{YYYY-MM-DD} {대화 주제 간단 요약}.md` (today's date, then the topic phrase from step 1).
 7. Tell the user the filename and give a 1-line verbal summary that includes the week-over-week trend.
 
 ## Note template

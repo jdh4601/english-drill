@@ -1,0 +1,18 @@
+{
+  "name": "english-drill",
+  "owner": {
+    "name": "Jayden",
+    "email": "jdh9490@inu.ac.kr"
+  },
+  "plugins": [
+    {
+      "name": "english-drill",
+      "source": ".",
+      "description": "영어 회화 복습 + 약점 반사 드릴 세트. 회화록을 분석해 약점을 추출(review)하고, 그 약점을 한→영 반사 드릴로 훈련(drill)하는 피드백 루프.",
+      "version": "1.0.0",
+      "category": "education",
+      "tags": ["english", "speaking", "grammar", "obsidian", "pkm"],
+      "strict": false
+    }
+  ]
+}
